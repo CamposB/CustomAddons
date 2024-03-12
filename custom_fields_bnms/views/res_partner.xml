@@ -1,0 +1,15 @@
+<odoo>
+
+    <record id="view_custom_fields_res_partner_bonamaison" model="ir.ui.view">
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']" position="after">
+                <h3>
+                    <field name="incorporadora_id" placeholder="Incorporadora" nolabel="1"/>
+                </h3>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

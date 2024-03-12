@@ -1,0 +1,235 @@
+<odoo>
+    <template id="new_saleorder_report_bonamaison" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page">
+                <style>
+                    .img_product &gt; img{ display:block; width:70px;padding-bottom:20px; }
+                    .td_row_spacer { border-top: 1px solid; }
+                    th, td, table,tr {
+                    padding: 8px;
+                    border:1px solid black;
+                    }
+                    span{font-size:18px;}
+                </style>
+                <div class="oe_structure"/>
+                <div class="row">
+                    <div class="col-6">
+                        <span t-field="res_company.l10n_br_legal_name"/>
+                        <br/>
+                        <span t-field="res_company.street"/>
+                        <span>,</span>
+                        <span t-field="res_company.l10n_br_number"/>
+                        <span>-</span>
+                        <span t-field="res_company.street2"/>
+                        <br/>
+                        <span t-field="res_company.city_id.name"/>
+                        <span>,</span>
+                        <span t-field="res_company.state_id.name"/>
+                        <span>- CEP.:</span>
+                        <span t-field="res_company.zip"/>
+                        <br/>
+                        <span>CNPJ:
+                            <span t-field="res_company.l10n_br_cnpj_cpf"/>
+                        </span>
+                        <span>- I.E:
+                            <span t-field="res_company.l10n_br_inscr_est"/>
+                        </span>
+                        <br/>
+                        <span>Telefones.:</span>
+                        <span t-field="res_company.phone"/>
+                        <br/>
+                        <span>E-Mail: lucas@bonamaison.com /</span>
+                        <span t-field="doc.user_id.email"/>
+                    </div>
+                    <div class="col-4">
+                        <h2 align="left" style="font-size: 80px;">
+                            <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+                                <span t-field="doc.name"/>
+                            </t>
+                            <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                                <span t-field="doc.name"/>
+                            </t>
+                        </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Visite:
+                            <a href="www.bonamaison.com">WWWBONAMAISONCOM</a>
+                        </strong>
+                        <br/>
+                    </div>
+                    <div class="col-6">
+                        <strong>Emissão:</strong>
+                        <span t-field="doc.date_order"
+                              t-field-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/>
+                        <br/>
+                        <strong>Validade:</strong>
+                        <span t-field="doc.validity_date"
+                              t-field-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/>
+                        <br/>
+                        <strong>Cliente:</strong>
+                    </div>
+                </div>
+                <div class="row" style="border-top: 1px solid #cecece">
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Cliente:</strong>
+                        <span t-field="doc.partner_id.name"/>
+                        <br/>
+                        <strong>E-mail:</strong>
+                        <span t-field="doc.partner_id.email"/>
+                        <br/>
+                        <strong>Fone:</strong>
+                        <span t-field="doc.partner_id.phone"/>
+                    </div>
+                    <div class="col-6">
+                        <strong>Incorporadora:</strong>
+                        <span t-field="doc.incorporadora_id"/>
+                        <br/>
+                        <strong>Projeto:</strong>
+                        <span style="color:white">.</span>
+                        <span t-field="doc.tag_ids"/>
+                        <br/>
+                        <strong>Local:</strong>
+                        <span t-field="doc.partner_invoice_id.city"/>
+                        <span>,</span>
+                        <span t-field="doc.partner_invoice_id.state_id"/>
+                    </div>
+                </div>
+                <div class="row" style="border-top: 1px solid #cecece">
+                </div>
+                <br/>
+                <table class="table" style="text-transform: uppercase;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Imagem</th>
+                            <th class="text-center">Descrição</th>
+                            <th class="text-right">Quantidade</th>
+                            <th class="text-right">Valor Unit</th>
+                            <th class="text-right">Unit c/Desc</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="sale_tbody">
+                        <t t-set="current_subtotal" t-value="0"/>
+                        <t t-foreach="doc.order_line.filtered(lambda x: not x.is_delivery)" t-as="l">
+                            <tr>
+                                <t t-if="not l.display_type">
+                                    <td class="text-center">
+                                        <span t-field="l.product_id.image_128"
+                                              t-options='{"widget": "image", "style":"max-height: 50px; display: inline-block"}'/>
+                                    </td>
+                                    <td style="vertical-align:middle;">
+                                        <span t-field="l.name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="l.product_uom_qty"/>
+                                    </td>
+                                    <td class="text-right td_row_spacer">
+                                        <span t-field="l.price_unit"
+                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                                    </td>
+                                    <t t-if="l.discount > 0">
+                                        <td class="text-right td_row_spacer">
+                                            <span t-esc="l.price_unit-((l.price_unit*l.discount)/100)"
+                                                  t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                                        </td>
+                                    </t>
+                                    <t t-else="l.discount == 0">
+                                        <td class="text-right td_row_spacer">
+                                            <span>--</span>
+                                        </td>
+                                    </t>
+                                    <td class="text-right td_row_spacer">
+                                        <span t-field="l.price_subtotal"
+                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                                    </td>
+                                </t>
+                                <t t-if="l.display_type == 'line_section'">
+                                    <td name="td_section_line" colspan="99">
+                                        <span t-field="l.name"/>
+                                    </td>
+                                    <t t-set="current_section" t-value="l"/>
+                                    <t t-set="current_subtotal" t-value="0"/>
+                                </t>
+                                <t t-if="l.display_type == 'line_note'">
+                                    <td name="td_note_line" colspan="99">
+                                        <span t-field="l.name"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <div class="row" style="page-break-inside:avoid;">
+                    <div style="padding-top:30px;">
+                        <t t-if="doc.company_id.name == 'BONAMAISON'">
+                            <span>CONDIÇÕES DE PAGAMENTO:</span>
+                            <span t-field="doc.payment_term_id"/>
+                            <div style="padding-top:30px;">
+                                <span>NÃO VINCULAMOS PAGAMENTO COM A ENTREGA</span>
+                                <br/>
+                                <span>A BONAMAISON NÃO REALIZA iÇAMENTO DE MOBILIÁRIO</span>
+                            </div>
+                        </t>
+                        <t t-if="doc.company_id.name == 'DIXIFIT'">
+                            <div style="padding-top:10px;">
+                                <span>ATENÇÃO: Confira as dimensões dos produtos e certifique-se que estão adequadas
+                                </span>
+                                <br/>
+                                <span>aos elevadores, portas e corredores do local de entrega.</span>
+                                <br/>
+                                <span>Não fazemos montagem e desmontagem de portas e janekas, transporte pela escada ou
+                                    içamento.
+                                </span>
+                                <br/>
+                                <span>Itens com acabamento em lamina ou laca não podem ficar expostos a sol/chuva ou
+                                    locais
+                                    de insolação
+                                </span>
+                                <br/>
+                            </div>
+                        </t>
+                    </div>
+                    <div>
+                        <table style="border-collapse: collapse;
+                                text-transform: uppercase;
+                                position: absolute;
+                                right: 0;">
+                            <tbody>
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td>
+                                        <span t-esc="doc.amount_untaxed - doc.l10n_br_delivery_amount"
+                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Desconto</td>
+                                    <td>
+                                        <span t-esc="doc.amount_discount"
+                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.pricelist_id.currency_id}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Frete</td>
+                                    <td>
+                                        <span t-field="doc.l10n_br_delivery_amount"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>
+                                        <span t-field="doc.amount_total"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

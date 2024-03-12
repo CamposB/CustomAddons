@@ -1,0 +1,17 @@
+<odoo>
+    <template id="external_layout_background_custom" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[@class='o_boxed_header']" position="replace">
+            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" class="float-left"/>
+        </xpath>
+        <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout" position="replace">
+            <div class="text-center">
+                <div>
+                    Page:
+                    <span class="page"/>
+                    /
+                    <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
