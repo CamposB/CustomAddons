@@ -1,8 +1,8 @@
-Odoo Brasil - an easy way to use Odoo
+Odoo Bonamaison 
 ============================================
 
 <p align="center">
-<a name="top" href="http://bonamaison.com/"><img src="https://github.com/Trust-Code/odoo-brasil/raw/12.0/icon.png" width="250"></a>
+<a name="top" href="http://bonamaison.com/"><img src="https://bonamaison.com/bonamaison/wp-content/themes/bonamaison/images/bonamaison.jpg" width="250"></a>
 </p>
 
 <p align="center">
